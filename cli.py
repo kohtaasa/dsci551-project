@@ -154,6 +154,72 @@ def validate_command(command: str):
             print("Invalid command. Please try again.")
 
 
+def print_help_message():
+    help_message = """
+Exit the app
+    Command: exit
+
+CRUD Operations
+---------------    
+Create Operations
+    Create Database
+        Command: create db <database_name>
+        Description: Creates a new database with the specified name.
+    
+    Create Collection
+        Command: create collection <collection_name>
+        Description: Creates a new collection within the current database.
+    
+    Insert Data to a Collection
+        Insert a single item
+            Command: insert <collection> <data>
+            Example: insert students {"id": "s100", "name": "foo"}
+    
+        Insert multiple items
+            Command: insertMany <collection> [list of data]
+
+Read Operations
+    List databases
+        Command: list db
+
+    List collections
+        Command: list collection
+
+    Run queries
+        Command: find <query>
+
+Update Operations
+    Update a single item
+        Command: modify <collection> <condition> <new_data>
+
+    Update multiple items
+        Command: modifyMany <collection> <condition> <new_data>
+
+Delete Operations
+    Delete database
+        Command: drop db <database_name>
+
+    Delete collection
+        Command: drop collection <collection_name>
+
+    Delete a single item
+        Command: remove <collection> <condition>
+
+    Delete multiple items
+        Command: removeMany <collection> <condition>
+
+Query Language
+--------------
+    Example Query: 
+    GET season, tm, COUNT(player), AVG(age) 
+    FROM players 
+    FILTER season = '2024' 
+    GROUP season, tm 
+    SORT age_avg DESC
+"""
+    print(help_message)
+
+
 def main():
     ascii_art = """
     __  __                  ____  ____ 
@@ -172,7 +238,7 @@ def main():
             print("Goodbye!")
             break
         elif command == "help":
-            print("exit: Exit the program")
+            print_help_message()
         else:
             validate_command(command)
 
