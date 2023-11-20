@@ -18,7 +18,12 @@ External sort
 
 
 ## CRUD Operations
-### Insert
+### Create Database
+``create db <database_name>``
+### Create collection
+``create collection <collection_name>``
+
+### Insert data to a collection
 #### Insert a single item  
 ``insert <collection> <data>``  
 Example: ``insert students {"id": "s100", "name": "foo"}``
@@ -27,7 +32,9 @@ Example: ``insert students {"id": "s100", "name": "foo"}``
 ``insertMany <collection> [list of data]`` 
 
 ### Read
-``find <query>``
+List databases: ``list db``  
+List collections: ``list collection``  
+Run queries: ``find <query>``
 
 ### Update
 #### Update a single item
@@ -37,6 +44,11 @@ Example: ``insert students {"id": "s100", "name": "foo"}``
 ``modifyMany <collection> <condition> <new_data>``
 
 ### Delete
+#### Delete database
+``drop db <database_name>``
+#### Delete collection
+``drop collection <collection_name>``
+
 #### Delete a single item
 ``remove <collection> <condition> ``
 
