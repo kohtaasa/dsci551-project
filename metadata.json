@@ -1,0 +1,21 @@
+{
+  "databases": [
+    {
+      "name": "nba",
+      "collections": [
+        {
+          "name": "players",
+          "partition_count": 4
+        },
+        {
+          "name": "teams",
+          "partition_count": 1
+        },
+        {
+          "name": "plays",
+          "partition_count": 3
+        }
+      ]
+    }
+  ]
+}
