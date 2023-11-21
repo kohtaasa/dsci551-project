@@ -12,6 +12,8 @@ def parse_query(query):
     try:
         get_index = parts_lower.index("get")
         from_index = parts_lower.index("from")
+        if from_index <= get_index:
+            return None, None, None, None, None, None, None
     except ValueError:
         return None, None, None, None, None, None, None
 
@@ -19,6 +21,11 @@ def parse_query(query):
     group_index = parts_lower.index("group") if "group" in parts_lower else None
     sort_index = parts_lower.index("sort") if "sort" in parts_lower else None
     limit_index = parts_lower.index("limit") if "limit" in parts_lower else None
+
+    # Ensure the order of keywords
+    keyword_indices = [index for index in [filter_index, group_index, sort_index, limit_index] if index is not None]
+    if any(keyword_indices[i] <= keyword_indices[i - 1] for i in range(1, len(keyword_indices))):
+        return None, None, None, None, None, None, None
 
     conditions = []
     group_by = []
@@ -261,5 +268,5 @@ def execute_query(database, query):
 if __name__ == '__main__':
     # query = ("GET season, tm, COUNT(player), AVG(age) FROM players F"
     #          "ILTER season = '2024' GROUP season, tm SORT age_avg DESC LIMIT 10")
-    query = "GET season, team FROM teams FILTER season = '2024' LIMIT 10"
+    query = "GET season, team FROM teams FILTER seaso = '2024' LIMIT 10"
     execute_query('nba', query)
