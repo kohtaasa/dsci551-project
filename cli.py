@@ -21,7 +21,7 @@ def validate_command(command: str):
 
     if command_type == 'select':
         if len(parts) != 2:
-            print("Invalid command. Usage: select_db <database_name>")
+            print("Invalid command. Usage: select <database_name>")
         else:
             selected_db = parts[1]
             db_exists = False
@@ -35,20 +35,21 @@ def validate_command(command: str):
                 if not db_exists:
                     print(f"Database '{selected_db}' does not exist.")
 
+    elif command_type == 'list' and parts[1] == 'db':
+        if len(parts) != 2:
+            print("Invalid command. Usage: list db")
+        else:
+            show_databases()
+
     elif not selected_db:
-        print("No database selected. Please select a database using 'select_db <database_name>'")
+        print("No database selected. Please select a database using 'select <database_name>'")
 
     else:
-        if command_type == 'list':
+        if command_type == 'list' and parts[1] == 'collection':
             if len(parts) != 2:
-                print("Invalid command. Usage: list collection/db")
+                print("Invalid command. Usage: list collection")
             else:
-                if parts[1] == 'collection':
-                    show_collections(selected_db)
-                elif parts[1] == 'db':
-                    show_databases()
-                else:
-                    print("Invalid command. Usage: list collection/db")
+                show_collections(selected_db)
 
         elif command_type == 'create':
             if len(parts) != 3:
@@ -144,7 +145,7 @@ def validate_command(command: str):
                 condition = parts[2]
                 delete_many(selected_db, collection_name, condition)
 
-        elif command_type == 'find':
+        elif command_type == 'query':
             if len(for_query) != 2:
                 print("Invalid command. Usage: query <query>")
             else:
@@ -158,6 +159,9 @@ def print_help_message():
     help_message = """
 Exit the app
     Command: exit
+
+Select a database
+    Command: select <database_name>
 
 CRUD Operations
 ---------------    
@@ -186,7 +190,7 @@ Read Operations
         Command: list collection
 
     Run queries
-        Command: find <query>
+        Command: query <query>
 
 Update Operations
     Update a single item
