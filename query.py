@@ -4,6 +4,7 @@ Implement Read Operations
 
 import json
 import os
+import ast
 import tempfile
 import heapq
 from collections import defaultdict
@@ -112,7 +113,15 @@ def filter_by_values(temp_file, conditions) -> str:
         'eq': lambda x, v: x == v,
         'ne': lambda x, v: x != v,
         'in': lambda x, v: x in v,
+        'nin': lambda x, v: x not in v
     }
+
+    def convert_type(value, target_value):
+        if isinstance(target_value, int):
+            return int(value)
+        elif isinstance(target_value, float):
+            return float(value)
+        return value
 
     def evaluate_condition(item, condition):
         target, operator, value = condition['target'], condition['condition'], condition['value']
@@ -121,6 +130,13 @@ def filter_by_values(temp_file, conditions) -> str:
             raise ValueError(f'Invalid condition: {operator}')
 
         target_value = item.get(target)
+        if operator in ['in', 'nin'] and isinstance(value, str):
+            try:
+                value = ast.literal_eval(value)
+                if not isinstance(value, list):
+                    raise ValueError("Value must be a list for 'in' and 'nin' operations")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid list format in condition value")
         try:
             return target_value is not None and condition_function(target_value, value)
         except TypeError:
