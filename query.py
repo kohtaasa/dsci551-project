@@ -64,7 +64,7 @@ def select_fields(temp_file, fields, last_operation: bool = True):
             try:
                 selected_data = data if fields == ['*'] else {field: data[field] for field in fields}
             except KeyError:
-                continue
+                raise ValueError(f"Invalid field(s) in: {fields}")
             if last_operation:
                 yield selected_data
             else:
@@ -85,7 +85,10 @@ def select_record_fields(record, fields):
     :return: A dictionary with only the selected fields or all fields if '*' is specified.
     """
     # Select all fields if fields is '*'
-    selected_record = record if fields == ['*'] else {field: record[field] for field in fields}
+    try:
+        selected_record = record if fields == ['*'] else {field: record[field] for field in fields}
+    except KeyError:
+        raise ValueError(f"Invalid field(s) in: {fields}")
     return selected_record
 
 
@@ -116,13 +119,6 @@ def filter_by_values(temp_file, conditions) -> str:
         'nin': lambda x, v: x not in v
     }
 
-    def convert_type(value, target_value):
-        if isinstance(target_value, int):
-            return int(value)
-        elif isinstance(target_value, float):
-            return float(value)
-        return value
-
     def evaluate_condition(item, condition):
         target, operator, value = condition['target'], condition['condition'], condition['value']
         condition_function = condition_functions.get(operator)
@@ -130,6 +126,8 @@ def filter_by_values(temp_file, conditions) -> str:
             raise ValueError(f'Invalid condition: {operator}')
 
         target_value = item.get(target)
+        if target_value is None:
+            raise ValueError(f'Invalid field name: {target}')
         if operator in ['in', 'nin'] and isinstance(value, str):
             try:
                 value = ast.literal_eval(value)
