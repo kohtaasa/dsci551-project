@@ -32,20 +32,45 @@ def parse_query(query):
     # Extracting FROM clause
     table = parts[from_index + 1]
 
-    # Function to process filter values
+    # Function to process individual filter values
     def process_filter_value(value):
-        if value.startswith('"') and value.endswith('"'):
-            return value.strip('"')  # Remove quotes for strings
         try:
-            return int(value) if '.' not in value else float(value)  # Convert to int or float
+            if '.' in value:
+                return float(value)
+            else:
+                return int(value)
         except ValueError:
-            return value  # Return as is if conversion fails
+            return value.strip('"') if value.startswith('"') and value.endswith('"') else value
+
+    # Custom function to process the FILTER clause
+    def custom_filter_parser(filter_parts):
+        in_list = False
+        parsed_conditions = []
+        current_condition = []
+
+        for part in filter_parts:
+            if '[' in part:
+                in_list = True
+                current_condition.append(part.replace('[', ''))
+            elif ']' in part:
+                in_list = False
+                part = part.replace(']', '')
+                if part:  # Append the last part before the closing bracket, if it exists
+                    current_condition.append(process_filter_value(part))
+                parsed_conditions.append('[' + ''.join(map(str, current_condition)) + ']')
+                current_condition = []
+            elif in_list and part != ',':
+                current_condition.append(process_filter_value(part))
+            elif not in_list:
+                parsed_conditions.append(process_filter_value(part))
+
+        return parsed_conditions
 
     # Extracting FILTER clause
     if filter_index:
         filter_end = group_index or sort_index or limit_index or len(parts)
         filter_parts = parts[filter_index + 1:filter_end]
-        conditions = [process_filter_value(val) for val in filter_parts]
+        conditions = custom_filter_parser(filter_parts)
 
     # Extracting GROUP clause
     if group_index:
@@ -79,7 +104,10 @@ def convert_to_nested_format(condition_list):
         '<=': 'lte',
         '=': 'eq',
         '!=': 'ne',
-        'in': 'in'
+        'in': 'in',
+        'IN': 'in',
+        'nin': 'nin',
+        'NIN': 'nin',
     }
     operator_flip = {
         '>': '<',
@@ -165,6 +193,9 @@ def execute_query(database, query):
         return
 
     file_number = get_last_file_number(METADATA_FILE, database, table)
+    if not file_number:
+        print(f'Collection {table} does not exist')
+        return
     input_files = [f'data/{database}_{table}_{i}.json' for i in range(1, file_number + 1)]
     intermediate_results = [save_json_items_to_tempfile(input_file) for input_file in input_files]
 
@@ -209,7 +240,6 @@ def execute_query(database, query):
                 os.remove(sorted_file)
             else:
                 results = [select_fields(temp_file, columns) for temp_file in intermediate_results]
-                print(results)
                 count = 0
                 for result in results:
                     for item in result:
@@ -231,5 +261,5 @@ def execute_query(database, query):
 if __name__ == '__main__':
     # query = ("GET season, tm, COUNT(player), AVG(age) FROM players F"
     #          "ILTER season = '2024' GROUP season, tm SORT age_avg DESC LIMIT 10")
-    query = "GET player, tm FROM players FILTER season = '2022' SORT player DESC LIMIT 10"
+    query = "GET season, team FROM teams FILTER season = '2024' LIMIT 10"
     execute_query('nba', query)
