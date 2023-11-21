@@ -219,6 +219,9 @@ def insert_many(database_name: str, collection_name: str, new_data: str) -> bool
     """
     try:
         json_data = json.loads(new_data)
+        if not isinstance(json_data, list):
+            print('Insertion failed. Data must be an array.')
+            return False
     except json.decoder.JSONDecodeError:
         print('Insertion failed. Invalid JSON.')
         return False
@@ -291,7 +294,7 @@ def delete_one(database_name: str, collection_name: str, condition: str) -> bool
 
     existing_file_number = get_last_file_number(database_name, collection_name)
 
-    if not dict_condition: # if condition is empty, delete first item
+    if not dict_condition:  # if condition is empty, delete first item
         file_name = f'data/{database_name}_{collection_name}_1.json'
         with open(file_name, 'r+') as file:
             data = json.load(file)
@@ -323,12 +326,12 @@ def delete_one(database_name: str, collection_name: str, condition: str) -> bool
                             json.dump(data, file, indent=2)
                         print('Deletion successful.')
                         return True
+                    else:
+                        print('Item matching condition not found.')
+                        return False
             else:
                 print('Collection is empty. Nothing to delete.')
                 return False
-
-    print('Item matching condition not found.')
-    return False
 
 
 def delete_many(database_name: str, collection_name: str, condition: str) -> bool:
