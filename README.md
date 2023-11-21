@@ -34,7 +34,7 @@ Example: ``insert students {"id": "s100", "name": "foo"}``
 ### Read
 List databases: ``list db``  
 List collections: ``list collection``  
-Run queries: ``find <query>``
+Run queries: ``query <query>``
 
 ### Update
 #### Update a single item
