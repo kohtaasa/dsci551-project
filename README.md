@@ -1,21 +1,23 @@
-# Note
+# HoboDB
+
+## Get Started
+1. **Enter the CLI**: Run `honodb.sh` to start the command-line interface.
+2. **Select the database**: This is crucial as all operations are contextually based on the active database.
+
+## File Structure
+- cli.py: handle operations related to CLI (call function.py to query_executor.py to perform CRUD operations)
+- functions.py: handle CRUD operations except for query (insertion, deletion, modification)
+- query_executor.py: parse query given by users and process it (call query.py)
+- query.py: handles query operations (projection, filtering, grouping, aggregation, and sorting)
+- data directory: store dataset in JSON format
+- metadata.json: store metadata of the database system
+
 ## Storage System
-- Save database in several files as chunks
+- Save database in several files as chunks (5 MB)
 - File name should be {database_name}_{collection_name}_number.json
   - if one file exceeds a certain size the data will be saved in a new file
     - {database_name}_{collection_name}_1.json
     - {database_name}_{collection_name}_2.json
-    
-## Query Execution
-### Sort
-External sort
-
-### Group by (aggregation)
-- 2 step aggregation
-- partial aggregation on each chunk
-- final aggregation on partial results
-- **does not support COUNT DISTINCT**
-
 
 ## CRUD Operations
 ### Create Database
@@ -56,11 +58,14 @@ Run queries: ``query <query>``
 ``removeMany <collection> <condition>``
 
 ## Query Language
-GET season, tm, COUNT(player), AVG(age) FROM players FILTER season = '2024' GROUP season, tm SORT age_avg DESC
+``query GET season, tm, COUNT(player), AVG(age) FROM players FILTER season = '2024' GROUP season, tm SORT age_avg DESC``
 
 ### Aggregation Function
-- GROUP
-- new column name 
+- MIN
+- MAX
+- AVG
+- COUNT
+- SUM
 
 
 
