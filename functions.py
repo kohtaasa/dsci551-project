@@ -112,6 +112,9 @@ def create_collection(database_name: str, collection_name: str):
     metadata = load_metadata()
     for database in metadata['databases']:
         if database['name'] == database_name:
+            if any(collection['name'] == collection_name for collection in database['collections']):
+                print(f"Collection '{collection_name}' already exists in database '{database_name}'")
+                return False
             database['collections'].append({'name': collection_name, 'partition_count': 1})
             save_metadata(metadata)
             with open(f'data/{database_name}_{collection_name}_1.json', 'w') as file:
