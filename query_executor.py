@@ -263,10 +263,3 @@ def execute_query(database, query):
         for temp_file in intermediate_results:
             if os.path.exists(temp_file):
                 os.remove(temp_file)
-
-
-if __name__ == '__main__':
-    # query = ("GET season, tm, COUNT(player), AVG(age) FROM players F"
-    #          "ILTER season = '2024' GROUP season, tm SORT age_avg DESC LIMIT 10")
-    query = "GET season, team FROM teams FILTER seaso = '2024' LIMIT 10"
-    execute_query('nba', query)

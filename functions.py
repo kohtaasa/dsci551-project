@@ -517,20 +517,3 @@ def update_many(database_name: str, collection_name: str, condition: str, new_da
     if updated:
         print('Update successful.')
         return True
-
-
-if __name__ == '__main__':
-    database = 'basketball'
-    collection = 'test'
-    # new_data = '{"PLAYER_NAME": "John Smith", "TEAM_ID": "0000", "PLAYER_ID": "0000", "SEASON": "2023"}'
-    # insert_one(database, collection, new_data)
-    # l_data = '[{"PLAYER_NAME": "John Smith", "TEAM_ID": "0000", "PLAYER_ID": "0000", "SEASON": "2023"}, {"PLAYER_NAME": "John Smith", "TEAM_ID": "0000", "PLAYER_ID": "0000", "SEASON": "2023"}]'
-    # insert_many(database, collection, l_data)
-    # condition = '{"PLAYER_NAME": "John Smith"}'
-    # delete_one(database, collection, '{}')
-    # delete_many(database, collection, '{}')
-    # delete_many(database, collection, condition)
-    update_data = '{"foo": "bar"}'
-    # update_one(database, collection, '{"PLAYER_NAME": "John Smith"}', '{"REGION": "USA"}')
-    update_many(database, collection, '{}', update_data)
-    # update_many(database, collection, condition, update_data)
