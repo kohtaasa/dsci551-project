@@ -1,4 +1,4 @@
-# HoboDB
+# HonoDB
 
 ## Introduction
 This project aimed to design and implement a document-oriented NoSQL database, named HonoDB, that supports JSON data models. 
